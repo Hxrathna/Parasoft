@@ -6,6 +6,28 @@ class LoginPage {
 
   async goto() {
     await this.page.goto(this.url, { waitUntil: 'domcontentloaded' });
+    await this._ensureLoginFormVisible();
+  }
+
+  async _ensureLoginFormVisible() {
+    const usernameInput = await this.page.$('input[name="username"]');
+    if (usernameInput) {
+      return;
+    }
+
+    let logoutLink = await this.page.$('a[href="logout.htm"]');
+    if (!logoutLink) {
+      logoutLink = await this.page.$('text=Log Out');
+    }
+    if (logoutLink) {
+      await Promise.all([
+        this.page.waitForNavigation({ waitUntil: 'domcontentloaded' }),
+        logoutLink.click()
+      ]);
+    }
+
+    await this.page.goto(this.url, { waitUntil: 'domcontentloaded' });
+    await this.page.waitForSelector('input[name="username"]', { timeout: 30000 });
   }
 
   async login(username, password) {

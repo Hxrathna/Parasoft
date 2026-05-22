@@ -1,5 +1,7 @@
 const { Given, When, Then, Before, After, setDefaultTimeout } = require('@cucumber/cucumber');
 const { chromium } = require('playwright');
+const fs = require('fs');
+const path = require('path');
 const RegisterPage = require('../pages/registerPage');
 const LoginPage = require('../pages/loginPage');
 const DashboardPage = require('../pages/dashboardPage');
@@ -24,16 +26,33 @@ function makeRandomCustomer() {
 
 Before(async function () {
   this.browser = await chromium.launch({ headless: true });
+  this.context = await this.browser.newContext({
+    recordVideo: { dir: 'videos/', size: { width: 1280, height: 720 } }
+  });
+  this.page = await this.context.newPage();
 });
 
 After(async function () {
+  if (this.page) {
+    try {
+      await this.page.close();
+      const video = this.page.video();
+      if (video) {
+        const videoPath = await video.path();
+        const targetPath = path.join('videos', 'signup-recording.webm');
+        fs.mkdirSync(path.dirname(targetPath), { recursive: true });
+        fs.copyFileSync(videoPath, targetPath);
+        console.log('Saved screen recording:', targetPath);
+      }
+    } catch (error) {
+      console.warn('Video save failed:', error.message);
+    }
+  }
   if (this.context) await this.context.close();
   if (this.browser) await this.browser.close();
 });
 
 Given('I open the Parabank registration page', async function () {
-  this.context = await this.browser.newContext();
-  this.page = await this.context.newPage();
   this.registerPage = new RegisterPage(this.page);
   await this.registerPage.goto();
 });
@@ -44,9 +63,6 @@ When('I register a new customer with valid details', async function () {
 });
 
 Then('I should be able to sign in with the newly created account', async function () {
-  if (this.context) await this.context.close();
-  this.context = await this.browser.newContext();
-  this.page = await this.context.newPage();
   this.loginPage = new LoginPage(this.page);
   await this.loginPage.goto();
   await this.loginPage.login(this.customer.username, this.customer.password);

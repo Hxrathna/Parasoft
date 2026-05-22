@@ -31,3 +31,4 @@ npm test
 
 - The automation generates a random user each run to avoid registration collisions.
 - After login, the script captures the first visible dollar amount displayed on the dashboard and saves a screenshot to `login-dashboard.png`.
+- A screen recording of the full test flow is saved to `videos/signup-recording.webm`.
