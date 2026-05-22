@@ -25,7 +25,8 @@ function makeRandomCustomer() {
 }
 
 Before(async function () {
-  this.browser = await chromium.launch({ headless: true });
+  const isHeaded = process.env.HEADED === 'true';
+  this.browser = await chromium.launch({ headless: !isHeaded });
   this.context = await this.browser.newContext({
     recordVideo: { dir: 'videos/', size: { width: 1280, height: 720 } }
   });

@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "test": "cucumber-js --require steps/**/*.js --format summary --publish-quiet features/**/*.feature",
+    "test:headed": "HEADED=true cucumber-js --require steps/**/*.js --format summary --publish-quiet features/**/*.feature",
     "install:playwright": "npx playwright install chromium"
   },
   "dependencies": {
