@@ -3,12 +3,16 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "test": "cucumber-js --require steps/**/*.js --format progress --publish-quiet features/**/*.feature",
+    "test": "cucumber-js --require steps/**/*.js --format summary --publish-quiet features/**/*.feature",
     "install:playwright": "npx playwright install chromium"
   },
   "dependencies": {
     "@cucumber/cucumber": "^9.1.1",
     "playwright": "^1.42.0",
     "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.60.0",
+    "@types/node": "^25.9.1"
   }
 }

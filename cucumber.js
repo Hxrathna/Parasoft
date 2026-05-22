@@ -1,3 +1,3 @@
 module.exports = {
-  default: `--require steps/**/*.js --format progress --publish-quiet features/**/*.feature`
+  default: `--require steps/**/*.js --format progress --format summary --publish-quiet features/**/*.feature`
 };
